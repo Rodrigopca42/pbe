@@ -1,5 +1,7 @@
 package com.rodrigo.pbe.services;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +12,20 @@ import com.rodrigo.pbe.domain.Cidade;
 import com.rodrigo.pbe.domain.Cliente;
 import com.rodrigo.pbe.domain.Endereco;
 import com.rodrigo.pbe.domain.Estado;
+import com.rodrigo.pbe.domain.Pagamento;
+import com.rodrigo.pbe.domain.PagamentoComBoleto;
+import com.rodrigo.pbe.domain.PagamentoComCartao;
+import com.rodrigo.pbe.domain.Pedido;
 import com.rodrigo.pbe.domain.Produto;
+import com.rodrigo.pbe.domain.enums.EstadoPagamento;
 import com.rodrigo.pbe.domain.enums.TipoCliente;
 import com.rodrigo.pbe.repositories.CategoriaRepository;
 import com.rodrigo.pbe.repositories.CidadeRepository;
 import com.rodrigo.pbe.repositories.ClienteRepository;
 import com.rodrigo.pbe.repositories.EnderecoRepository;
 import com.rodrigo.pbe.repositories.EstadoRepository;
+import com.rodrigo.pbe.repositories.PagamentoRepository;
+import com.rodrigo.pbe.repositories.PedidoRepository;
 import com.rodrigo.pbe.repositories.ProdutoRepository;
 
 @Service
@@ -40,9 +49,15 @@ public class DBService {
 	@Autowired
 	private EnderecoRepository enderecoRepository;
 	
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 	
 	
-	public void intancaDB() {
+	
+	public void intancaDB() throws Exception {
 		
 		Categoria cat1 = new Categoria(null, "Informatica");
 		Categoria cat2 = new Categoria(null, "Escritorio");
@@ -92,6 +107,25 @@ public class DBService {
 		
 		clienteRepository.saveAll(Arrays.asList(cli1));
 		enderecoRepository.saveAll(Arrays.asList(e1, e2));
+		
+		//Instancia Pedido
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+		
+		
+		Pedido ped1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), cli1, e1);
+		Pedido ped2 = new Pedido(null, sdf.parse("10/10/2017 19:35"), cli1, e2);
+		
+		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+		
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(pagto1);
+		
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/10/2017 00:00"), null);
+		ped2.setPagamento(pagto2);
+		
+		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
+		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
 		
 		}
 	
