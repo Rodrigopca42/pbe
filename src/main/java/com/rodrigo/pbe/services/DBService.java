@@ -1,6 +1,5 @@
 package com.rodrigo.pbe.services;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
@@ -12,6 +11,7 @@ import com.rodrigo.pbe.domain.Cidade;
 import com.rodrigo.pbe.domain.Cliente;
 import com.rodrigo.pbe.domain.Endereco;
 import com.rodrigo.pbe.domain.Estado;
+import com.rodrigo.pbe.domain.ItemPedido;
 import com.rodrigo.pbe.domain.Pagamento;
 import com.rodrigo.pbe.domain.PagamentoComBoleto;
 import com.rodrigo.pbe.domain.PagamentoComCartao;
@@ -24,6 +24,7 @@ import com.rodrigo.pbe.repositories.CidadeRepository;
 import com.rodrigo.pbe.repositories.ClienteRepository;
 import com.rodrigo.pbe.repositories.EnderecoRepository;
 import com.rodrigo.pbe.repositories.EstadoRepository;
+import com.rodrigo.pbe.repositories.ItemPedidoRepository;
 import com.rodrigo.pbe.repositories.PagamentoRepository;
 import com.rodrigo.pbe.repositories.PedidoRepository;
 import com.rodrigo.pbe.repositories.ProdutoRepository;
@@ -54,6 +55,9 @@ public class DBService {
 	
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
+	
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
 	
 	
 	
@@ -126,6 +130,22 @@ public class DBService {
 		
 		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
 		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
+		
+		//Instaciando a classe de Associação ItemPedido.
+		
+		ItemPedido ip1 = new ItemPedido(ped1, p1, 0.00, 1, 2000.00);
+		ItemPedido ip2 = new ItemPedido(ped1, p3, 0.00, 2, 80.00);
+		ItemPedido ip3 = new ItemPedido(ped2, p2, 100.00, 1, 800.00);
+		
+		ped1.getItens().addAll(Arrays.asList(ip1, ip2));
+		ped2.getItens().addAll(Arrays.asList(ip3));
+		
+		p1.getItens().addAll(Arrays.asList(ip1));
+		p2.getItens().addAll(Arrays.asList(ip3));
+		p3.getItens().addAll(Arrays.asList(ip2));
+		
+	    itemPedidoRepository.saveAll(Arrays.asList(ip1, ip2, ip3));
+		
 		
 		}
 	
