@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rodrigo.pbe.domain.enums.EstadoPagamento;
 
 @Entity
@@ -22,6 +23,7 @@ public abstract class Pagamento implements Serializable{
 	private  Integer id;
 	private Integer estado;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "pedido_id")
 	@MapsId
